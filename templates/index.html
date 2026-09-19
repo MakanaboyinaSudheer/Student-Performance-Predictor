@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance & Risk Prediction System</title>
+    <!-- Modern Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Static stylesheet link -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="header-icon">🎓</div>
+            <h1>Student Performance & Academic Risk Predictor</h1>
+            <p class="subtitle">AI-powered analytics pipeline to forecast exam outcomes, evaluate academic risk levels, and deliver personalized action plans.</p>
+        </header>
+
+        {% if error %}
+        <div class="error-box">
+            <span class="error-icon">⚠️</span>
+            <div class="error-content">
+                <strong>Model Alert</strong>
+                <p>{{ error }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="content-wrapper">
+            <!-- 1. Input Form Section -->
+            <div class="form-section card">
+                <div class="card-header">
+                    <h2><span class="section-badge">1</span> Student Profile Inputs</h2>
+                    <p>Enter the student's study habits, environmental metrics, and academic factors.</p>
+                </div>
+                
+                <form method="POST" action="/">
+                    <div class="form-grid">
+                        <!-- Numeric Inputs -->
+                        <div class="form-group">
+                            <label for="study_hours">Study Hours (per week)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="study_hours" name="study_hours" step="0.5" min="0" max="100" required placeholder="e.g. 20" value="{{ form_data.study_hours if form_data else '' }}">
+                                <span class="input-unit">hrs/wk</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attendance">Attendance Rate</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="attendance" name="attendance" step="0.5" min="0" max="100" required placeholder="e.g. 85.5" value="{{ form_data.attendance if form_data else '' }}">
+                                <span class="input-unit">%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sleep_hours">Sleep Hours (per night)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="sleep_hours" name="sleep_hours" step="0.5" min="0" max="24" required placeholder="e.g. 7.5" value="{{ form_data.sleep_hours if form_data else '' }}">
+                                <span class="input-unit">hrs/night</span>
+                            </div>
+                        </div>
+
+                        <!-- Categorical Dropdowns mapped accurately to dataset -->
+                        <div class="form-group">
+                            <label for="motivation_level">Motivation Level</label>
+                            <select id="motivation_level" name="motivation_level" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Level</option>
+                                <option value="High" {% if form_data and form_data.motivation_level == 'High' %}selected{% endif %}>High</option>
+                                <option value="Medium" {% if form_data and form_data.motivation_level == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="Low" {% if form_data and form_data.motivation_level == 'Low' %}selected{% endif %}>Low</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="learning_resources">Access to Resources</label>
+                            <select id="learning_resources" name="learning_resources" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Quality</option>
+                                <option value="High" {% if form_data and form_data.learning_resources == 'High' %}selected{% endif %}>High Quality</option>
+                                <option value="Medium" {% if form_data and form_data.learning_resources == 'Medium' %}selected{% endif %}>Moderate Quality</option>
+                                <option value="Low" {% if form_data and form_data.learning_resources == 'Low' %}selected{% endif %}>Low Quality</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="parental_participation">Parental Involvement</label>
+                            <select id="parental_participation" name="parental_participation" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Level</option>
+                                <option value="High" {% if form_data and form_data.parental_participation == 'High' %}selected{% endif %}>High</option>
+                                <option value="Medium" {% if form_data and form_data.parental_participation == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="Low" {% if form_data and form_data.parental_participation == 'Low' %}selected{% endif %}>Low</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="teacher_quality">Teacher Quality</label>
+                            <select id="teacher_quality" name="teacher_quality" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Quality</option>
+                                <option value="High" {% if form_data and form_data.teacher_quality == 'High' %}selected{% endif %}>High Quality</option>
+                                <option value="Medium" {% if form_data and form_data.teacher_quality == 'Medium' %}selected{% endif %}>Medium Quality</option>
+                                <option value="Low" {% if form_data and form_data.teacher_quality == 'Low' %}selected{% endif %}>Low Quality</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="peer_influence">Peer Influence</label>
+                            <select id="peer_influence" name="peer_influence" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Influence</option>
+                                <option value="Positive" {% if form_data and form_data.peer_influence == 'Positive' %}selected{% endif %}>Positive</option>
+                                <option value="Neutral" {% if form_data and form_data.peer_influence == 'Neutral' %}selected{% endif %}>Neutral</option>
+                                <option value="Negative" {% if form_data and form_data.peer_influence == 'Negative' %}selected{% endif %}>Negative</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="family_background">Family Income Level</label>
+                            <select id="family_background" name="family_background" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Bracket</option>
+                                <option value="High" {% if form_data and form_data.family_background == 'High' %}selected{% endif %}>High Income</option>
+                                <option value="Medium" {% if form_data and form_data.family_background == 'Medium' %}selected{% endif %}>Middle Income</option>
+                                <option value="Low" {% if form_data and form_data.family_background == 'Low' %}selected{% endif %}>Low Income</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="internet_availability">Internet Access</label>
+                            <select id="internet_availability" name="internet_availability" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Option</option>
+                                <option value="Yes" {% if form_data and form_data.internet_availability == 'Yes' %}selected{% endif %}>Yes (Available)</option>
+                                <option value="No" {% if form_data and form_data.internet_availability == 'No' %}selected{% endif %}>No (Unavailable)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="school_type">School Type</label>
+                            <select id="school_type" name="school_type" required>
+                                <option value="" disabled {% if not form_data %}selected{% endif %}>Select Type</option>
+                                <option value="Public" {% if form_data and form_data.school_type == 'Public' %}selected{% endif %}>Public School</option>
+                                <option value="Private" {% if form_data and form_data.school_type == 'Private' %}selected{% endif %}>Private School</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-predict">
+                        <span>Predict Performance</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. Output Section -->
+            <div class="result-section card">
+                <div class="card-header">
+                    <h2><span class="section-badge">2</span> Prediction Analysis</h2>
+                    <p>Real-time machine learning forecast and action plan.</p>
+                </div>
+
+                {% if prediction is not none %}
+                    <div class="result-card fade-in">
+                        <div class="score-ring-wrapper">
+                            <div class="score-circle {% if grade in ['A', 'B'] %}good{% elif grade == 'C' %}medium{% else %}danger{% endif %}">
+                                <span class="score">{{ prediction }}</span>
+                                <span class="label">Forecast Score</span>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-label">Predicted Grade</span>
+                                <span class="stat-value grade-badge grade-{{ grade|lower }}">{{ grade }}</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Academic Risk Tier</span>
+                                <span class="stat-value risk-badge risk-{{ risk|lower }}">{{ risk }} Risk</span>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="suggestions-box">
+                            <div class="box-title">
+                                <span>💡</span>
+                                <h3>Personalized Action Plan</h3>
+                            </div>
+                            <ul>
+                                {% for suggest in suggestions %}
+                                    <li>{{ suggest }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="placeholder-card">
+                        <div class="placeholder-icon">📊</div>
+                        <h3>No Prediction Generated Yet</h3>
+                        <p>Complete the student profile form on the left and click <strong>Predict Performance</strong> to trigger the machine learning model.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
