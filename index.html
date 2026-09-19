@@ -114,7 +114,7 @@
             <div class="result-section">
                 <h2>Prediction Result</h2>
                 
-                {% if prediction %}
+                <!-- {% if prediction %} -->
                     <div class="result-card">
                         <div class="score-circle {% if grade == 'A' or grade == 'B' %}good{% elif grade == 'C' %}medium{% else %}danger{% endif %}">
                             <span class="score">{{ prediction }}</span>
@@ -124,11 +124,11 @@
                         <div class="stats-row">
                             <div class="stat-box">
                                 <h3>Grade</h3>
-                                <p class="stat-value">{{ grade }}</p>
+                                <p class="stat-value">{ grade }</p>
                             </div>
                             <div class="stat-box">
                                 <h3>Risk Level</h3>
-                                <p class="stat-value risk-{{ risk|lower }}">{{ risk }}</p>
+                                <p class="stat-value risk-{{ risk|lower }}">{ risk }</p>
                             </div>
                         </div>
 
@@ -136,17 +136,17 @@
                         <div class="suggestions-box">
                             <h3>Personalized Recommendations:</h3>
                             <ul>
-                                {% for suggest in suggestions %}
+                                <!-- {% for suggest in suggestions %}
                                     <li>{{ suggest }}</li>
-                                {% endfor %}
+                                {% endfor %} -->
                             </ul>
                         </div>
                     </div>
-                {% else %}
+                <!-- {% else %} -->
                     <div class="placeholder-msg">
                         <p>Enter the student's details through the form and click "Predict" to see the expected performance forecast and their academic risk level.</p>
                     </div>
-                {% endif %}
+                <!-- {% endif %} -->
             </div>
         </div>
     </div>
